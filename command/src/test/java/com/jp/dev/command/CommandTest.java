@@ -1,35 +1,30 @@
 package com.jp.dev.command;
 
-import com.jp.dev.command.boardingpass.AirportPass;
-import com.jp.dev.command.service.AirportPassService;
-import com.jp.dev.command.service.impl.AirportPassServiceImpl;
-import org.junit.jupiter.api.Assertions;
+import com.jp.dev.command.commands.BoughtCommand;
+import com.jp.dev.command.commands.ErrorCommand;
+import com.jp.dev.command.commands.SuccessCommand;
+import com.jp.dev.command.event.Event;
+import com.jp.dev.command.executor.EventExecutor;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@ExtendWith(MockitoExtension.class)
 public class CommandTest {
 
-
-    @Autowired
-    private AirportPassService airportPassService;
-
     @Test
-    public void shouldBuildAAirportPass() {
+    public void shouldVerifyEachCommand() {
 
-        AirportPass airportPass = new AirportPass();
+        Event event = new Event();
+        EventExecutor executor = new EventExecutor();
 
-        CommandExecutor executor = new CommandExecutor();
-        executor.executeBuild(new BuildItineraryCommand(new AirportPassServiceImpl(), airportPass));
-        executor.executeBuild(new BuildPassengerCommand(new AirportPassServiceImpl(), airportPass));
-        executor.executeBuild(new BuildBoardingDataCommand(new AirportPassServiceImpl(), airportPass));
-
-        assertNotNull(airportPass.getItinerary());
-        assertEquals("SCL", airportPass.getItinerary().getSegments().get(0).getDestination());
-        assertEquals("UIO", airportPass.getItinerary().getSegments().get(0).getOrigin());
-        assertEquals("Jon Doe", airportPass.getPassenger().getName());
-        assertEquals("5C", airportPass.getBoardingData().getSeat());
+        executor.executeCommand(new ErrorCommand(event));
+        assertEquals("Order had an error event", event.getResponse());
+        executor.executeCommand(new SuccessCommand(event));
+        assertEquals("Order had a success event", event.getResponse());
+        executor.executeCommand(new BoughtCommand(event));
+        assertEquals("Order was completed", event.getResponse());
     }
-
 }
