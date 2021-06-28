@@ -24,7 +24,8 @@ public class Application {
 	@PostConstruct
 	public void printPipeline() {
 
-		alphabeticPipeline.execute(new StringBuilder());
+		StringBuilder response = alphabeticPipeline.execute(new StringBuilder());
+		System.out.println("Alphabet pipeline executed " + response.toString());
 
 		numericPipeline.execute(1);
 

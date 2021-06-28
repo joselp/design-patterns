@@ -1,0 +1,9 @@
+pipelines:
+  AlphabeticPipeline:
+    - handlerA
+    - handlerB
+    - handlerC
+  NumericPipeline:
+    - handlerOne
+    - handlerTwo
+    - handlerThree
